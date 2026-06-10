@@ -158,8 +158,8 @@ header{background:linear-gradient(135deg,#1a1200,#0d0f14);border-bottom:1px soli
   <div class="modal">
     <div style="font-size:36px;margin-bottom:6px">&#9876;&#65039;</div>
     <h2>Admin Login</h2>
-    <p>เน€เธเนเธฒเธชเธนเนเธฃเธฐเธเธเน€เธเธทเนเธญเนเธเนเนเธเนเธเธเธเธฒเธฃเธฃเธ<br>เธเธนเนเน€เธฅเนเธเธ—เธฑเนเธงเนเธเธเธ”เธ”เธนเนเธ”เนเน€เธฅเธข</p>
-    <input type="text" id="uinput" placeholder="Username" autocomplete="off">
+    <p>Login to edit the battle plan<br>Viewers can enter without login</p>
+    <input type="text" id="uinput" placeholder=" autocomplete="off">
     <input type="password" id="pinput" placeholder="Password">
     <button class="blogin" id="btnLogin">&#9889; Admin Login</button>
     <div class="errmsg" id="errmsg"></div>
@@ -179,7 +179,7 @@ header{background:linear-gradient(135deg,#1a1200,#0d0f14);border-bottom:1px soli
 </header>
 
 <div class="main">
-  <div class="sidebar"><div class="stitle">&#9876; 8 Party</div><div id="pList"></div></div>
+  <div class="sidebar"><div class="stitle">&#9876; 8 Parties</div><div id="pList"></div></div>
 
   <div class="mapwrap" id="mapwrap">
     <div id="mapbg"></div>
@@ -189,20 +189,20 @@ header{background:linear-gradient(135deg,#1a1200,#0d0f14);border-bottom:1px soli
     <div id="labelLayer"></div>
 
     <div class="dtool hide" id="dtool">
-      <button class="tb on" id="tbMove" title="เธฅเธฒเธเธเธฒเธ•เธตเน">&#10021;</button>
-      <button class="tb" id="tbPen" title="เธงเธฒเธ”">&#9998;</button>
-      <button class="tb" id="tbErase" title="เธฅเธ">&#9003;</button>
-      <button class="tb" id="tbClear" title="เธฅเธเธ—เธฑเนเธเธซเธกเธ”">&#128465;</button>
-      <button class="tb" id="tbUndo" title="เธขเธเน€เธฅเธดเธ (Ctrl+Z)">&#8617;</button>
+      <button class="tb on" id="tbMove" title="Move party">&#10021;</button>
+      <button class="tb" id="tbPen" title="Draw">&#9998;</button>
+      <button class="tb" id="tbErase" title="Erase">&#9003;</button>
+      <button class="tb" id="tbClear" title="Clear all">&#128465;</button>
+      <button class="tb" id="tbUndo" title="Undo (Ctrl+Z)">&#8617;</button>
       <div class="tsep"></div>
-      <button class="tb" id="tbArrow" title="เธฅเธนเธเธจเธฃ">&#10145;</button>
-      <button class="tb" id="tbText" title="เธเนเธญเธเธงเธฒเธก">T</button>
+      <button class="tb" id="tbArrow" title="Arrow">&#10145;</button>
+      <button class="tb" id="tbText" title="Text label">T</button>
       <div class="tsep"></div>
       <input type="color" class="tcolor" id="penColor" value="#ff0000">
       <div class="tsep"></div>
       <input type="range" class="tsize" id="penSize" min="2" max="24" value="5">
       <div class="tsep"></div>
-      <button class="tb" id="tbExport" title="Export เธฃเธนเธ">&#128247;</button>
+      <button class="tb" id="tbExport" title="Export image">&#128247;</button>
     </div>
 
     <div class="statbar" id="statbar">&#128065; Viewer <span class="sdot" id="sdot"></span></div>
@@ -210,20 +210,20 @@ header{background:linear-gradient(135deg,#1a1200,#0d0f14);border-bottom:1px soli
   </div>
 
   <div class="rpanel">
-    <div class="psec"><h3>&#128203; เนเธเนเธ•เนเธเธ</h3><textarea class="notes" id="notes" readonly></textarea></div>
+    <div class="psec"><h3>&#128203; Battle Notes</h3><textarea class="notes" id="notes" readonly></textarea></div>
     <div class="psec"><h3>&#127912; Legend</h3><div id="legend"></div></div>
     <div class="psec" id="admTools" style="display:none">
       <h3>&#9881; Admin</h3>
-      <button class="breset" id="btnReset2">&#8635; เธฃเธตเน€เธเนเธ•เธ•เธณเนเธซเธเนเธ</button>
-      <button class="breset" id="btnClrDrw" style="margin-top:4px">&#128465; เธฅเธเธ เธฒเธเธงเธฒเธ”</button>
-      <button class="breset" id="btnClearArrows" style="margin-top:4px">&#128465; เธฅเธเธฅเธนเธเธจเธฃ/เธเนเธญเธเธงเธฒเธก</button>
-      <button class="breset" id="btnExport2" style="margin-top:4px;border-color:var(--gdk);color:var(--gold)">&#128247; Export เธฃเธนเธ</button>
+      <button class="breset" id="btnReset2">&#8635; Reset positions</button>
+      <button class="breset" id="btnClrDrw" style="margin-top:4px">&#128465; Clear drawing</button>
+      <button class="breset" id="btnClearArrows" style="margin-top:4px">&#128465; Clear arrows/text</button>
+      <button class="breset" id="btnExport2" style="margin-top:4px;border-color:var(--gdk);color:var(--gold)">&#128247; Export image</button>
     </div>
     <div class="psec" id="fmSection" style="display:none">
       <h3>&#128203; Formation</h3>
       <div style="display:flex;gap:4px;margin-bottom:6px">
-        <input type="text" id="fmName" placeholder="เธเธทเนเธญเนเธเธ..." style="flex:1;background:var(--bg);border:1px solid var(--bd);color:var(--tx);padding:3px 7px;border-radius:5px;font-size:11px;outline:none;">
-        <button id="btnSaveFm" style="background:var(--gdk);color:#1a1200;border:none;border-radius:5px;padding:3px 8px;font-size:11px;cursor:pointer;font-weight:700">เธเธฑเธเธ—เธถเธ</button>
+        <input type="text" id="fmName" placeholder="Plan name..."flex:1;background:var(--bg);border:1px solid var(--bd);color:var(--tx);padding:3px 7px;border-radius:5px;font-size:11px;outline:none;">
+        <button id="btnSaveFm" style="background:var(--gdk);color:#1a1200;border:none;border-radius:5px;padding:3px 8px;font-size:11px;cursor:pointer;font-weight:700">Save</button>
       </div>
       <div id="fmList"></div>
       <div class="phase-nav" id="phaseNav" style="display:none">
@@ -232,7 +232,7 @@ header{background:linear-gradient(135deg,#1a1200,#0d0f14);border-bottom:1px soli
         <button id="btnNextPhase">&#9654;</button>
       </div>
     </div>
-    <div class="vnote" id="vnote">&#128065; <strong>Viewer</strong><br>เธญเธฑเธเน€เธ”เธ—เธญเธฑเธ•เนเธเธกเธฑเธ•เธด<br>&#128154; เธเธธเธ”เน€เธเธตเธขเธง = real-time</div>
+    <div class="vnote" id="vnote">&#128065; <strong>Viewer</strong><br>Auto-updated<br>&#128154; Green dot = real-time</div>
   </div>
 </div>
 
@@ -447,7 +447,7 @@ mapwrap.addEventListener("click",function(e){
   var xp=(e.clientX-r.left)/r.width*100,yp=(e.clientY-r.top)/r.height*100;
   var wrap2=document.createElement("div");wrap2.className="label-input-wrap";
   wrap2.style.left=xp+"%";wrap2.style.top=yp+"%";
-  var inp=document.createElement("input");inp.type="text";inp.placeholder="เธเธดเธกเธเนเธเนเธญเธเธงเธฒเธก...";inp.maxLength=40;
+  var inp=document.createElement("input");inp.type="text";inp.placeholder="Type label...";inp.maxLength=40;
   var col=document.getElementById("penColor").value;
   var ok=document.createElement("button");
   ok.textContent="โ”";ok.style.cssText="background:var(--gdk);color:#1a1200;border:none;border-radius:4px;padding:2px 6px;cursor:pointer;font-size:12px;";
@@ -542,7 +542,7 @@ function closeLogin(){document.getElementById("modal").classList.add("hide");}
 function tryLogin(){
   var u=document.getElementById("uinput").value.trim(),p=document.getElementById("pinput").value;
   if(u==="admin"&&p==="admin123"){isAdmin=true;closeLogin();applyMode();}
-  else document.getElementById("errmsg").textContent="Username เธซเธฃเธทเธญ Password เนเธกเนเธ–เธนเธเธ•เนเธญเธ";
+  else document.getElementById("errmsg").textContent="Wrong username or password";
 }
 function logout(){isAdmin=false;applyMode();}
 document.getElementById("btnLogin").onclick=tryLogin;
@@ -584,7 +584,7 @@ function applyMode(){
 function initParties(){
   parties=[];
   for(var i=0;i<8;i++) parties.push({id:i,label:"P"+(i+1),color:COLORS[i],name:NAMES[i],members:["","","","",""],x:DEFPOS[i].x,y:DEFPOS[i].y});
-  notes="เนเธเธเธเธฒเธฃเธฃเธ:\n- P5 เธขเธถเธ” Vale Throne\n- P1 Green L / P2 Green R\n- P7 Orange L / P8 Orange R\n- P3 Top Jungle\n- P4+P6 Shrine";
+  notes="Battle Plan:\n- P5 hold Vale Throne\n- P1 Green L / P2 Green R\n- P7 Orange L / P8 Orange R\n- P3 Top Jungle\n- P4+P6 Shrine";
 }
 function saveLocal(){try{localStorage.setItem("ro_gw10",JSON.stringify({p:parties,n:notes,ar:arrows,lb:labels,fm:formations,cf:currentFormation}));}catch(e){}}
 function loadLocal(){try{var s=localStorage.getItem("ro_gw10");if(s){var d=JSON.parse(s);if(d.p)parties=d.p;if(d.n!==undefined)notes=d.n;if(d.ar)arrows=d.ar;if(d.lb)labels=d.lb;if(d.fm)formations=d.fm;if(d.cf!==undefined)currentFormation=d.cf;}}catch(e){}}
@@ -613,7 +613,7 @@ function renderSidebar(){
           var row=document.createElement("div");row.className="mrow";
           var num=document.createElement("span");num.className="mnum";num.textContent=(jj+1)+".";
           var inp=document.createElement("input");inp.type="text";inp.className="minput"+(isAdmin?" ed":"");
-          inp.value=parties[idx].members[jj]||"";inp.placeholder="เธเธทเนเธญเธ•เธฑเธงเธฅเธฐเธเธฃ";
+          inp.value=parties[idx].members[jj]||"";inp.placeholder="Player name";
           inp.oninput=(function(ii,jjj){return function(){
             parties[ii].members[jjj]=this.value;
             updateMemberNames(ii);
@@ -625,7 +625,7 @@ function renderSidebar(){
       div.appendChild(ml);
       /* party notes */
       var pn=document.createElement("textarea");pn.className="pnotes"+(isAdmin?" ed":"");
-      pn.placeholder="เนเธเนเธ•เธเธฒเธ•เธตเน...";pn.value=p.pnotes||"";
+      pn.placeholder="Party notes...";pn.value=p.pnotes||"";
       pn.oninput=(function(ii){return function(){parties[ii].pnotes=this.value;saveLocal();pushDB();};})(idx);
       div.appendChild(pn);
       list.appendChild(div);
@@ -784,10 +784,10 @@ function applyFormation(f){
 function renderFmList(){
   var ul=document.getElementById("fmList");if(!ul)return;
   ul.innerHTML="";
-  if(formations.length===0){ul.innerHTML="<div style='font-size:10px;color:var(--mu)'>เธขเธฑเธเนเธกเนเธกเธตเนเธเธ</div>";return;}
+  if(formations.length===0){ul.innerHTML="<div style='font-size:10px;color:var(--mu)'>No formations yet</div>";return;}
   formations.forEach(function(f,i){
     var row=document.createElement("div");row.className="fm-item"+(i===currentFormation?" active":"");
-    row.textContent=f.name||("เนเธเธ "+(i+1));
+    row.textContent="Plan "+(i+1);
     var del=document.createElement("button");del.className="fm-del";del.textContent="โ•";
     del.onclick=function(e){e.stopPropagation();formations.splice(i,1);if(currentFormation>=formations.length)currentFormation=formations.length-1;renderFmList();updatePhaseNav();saveLocal();pushDB();};
     row.appendChild(del);
@@ -805,7 +805,7 @@ function updatePhaseNav(){
 
 document.getElementById("btnSaveFm").onclick=function(){
   if(!isAdmin)return;
-  var nm=document.getElementById("fmName").value.trim()||("เนเธเธ "+(formations.length+1));
+  var nm=document.getElementById("fmName").value.trim()||("Plan "+(formations.length+1));
   formations.push(captureFormation(nm));
   currentFormation=formations.length-1;
   document.getElementById("fmName").value="";
