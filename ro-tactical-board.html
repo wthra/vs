@@ -201,6 +201,7 @@ function mDraw(x,y){
   if(drawMode==="pen"){ctx.strokeStyle=document.getElementById("penColor").value;ctx.lineWidth=parseInt(document.getElementById("penSize").value);ctx.globalCompositeOperation="source-over";}
   else{ctx.strokeStyle="rgba(0,0,0,1)";ctx.lineWidth=30;ctx.globalCompositeOperation="destination-out";}
   ctx.lineCap="round";ctx.lineJoin="round";ctx.stroke();
+  if(drawMode==="pen"&&Math.random()<0.55)spawnSpark(x,y);   /* sparkle trail */
 }
 function eDraw(){if(!isDrawing)return;isDrawing=false;ctx.globalCompositeOperation="source-over";pushDraw(cv.toDataURL());}
 function clearDraw(){if(!isAdmin)return;ctx.clearRect(0,0,cv.width,cv.height);pushDraw("");}
@@ -661,9 +662,7 @@ function renderTokens(){
       wrap.className="tok";wrap.id="tok"+idx;
       wrap.style.left=p.x+"%";wrap.style.top=p.y+"%";
       wrap.style.setProperty("--fdelay",delay);
-      /* hover a token on the map -> highlight its party card (map<->sidebar link) */
-      wrap.addEventListener("mouseenter",function(){var c=document.getElementById("pcard"+idx);if(c)c.classList.add("pcard-hl");});
-      wrap.addEventListener("mouseleave",function(){var c=document.getElementById("pcard"+idx);if(c)c.classList.remove("pcard-hl");});
+      wireTokenLife(wrap,idx);   /* hover: highlight card + mob reacts + faces cursor */
 
       var inner=document.createElement("div");inner.className="tok-inner";
 
@@ -701,6 +700,8 @@ function attachDrag(){
     t.parentNode.replaceChild(fresh,t);
     tokens[idx]=fresh;t=fresh;
     var inner=t.querySelector(".tok-inner");
+    var sprite=t.querySelector(".tok-sprite");
+    wireTokenLife(t,idx);   /* re-wire hover life (cloneNode dropped listeners) */
 
     function startSpring(getPos,endCb){
       var area=document.getElementById("mapwrap");
@@ -712,9 +713,12 @@ function attachDrag(){
         var dx=tx-sx,dy=ty-sy;
         vx=(vx+dx*0.22)*0.75;vy=(vy+dy*0.22)*0.75;
         sx+=vx;sy+=vy;
-        var ang=vx*5,sc=1.18+Math.min(0.12,Math.sqrt(vx*vx+vy*vy)*0.035);
+        var spd=Math.sqrt(vx*vx+vy*vy);
+        var ang=vx*5,sc=1.18+Math.min(0.12,spd*0.035);
         t.style.left=sx+"%";t.style.top=sy+"%";
         if(inner)inner.style.transform="scale("+sc+") rotate("+ang+"deg)";
+        if(sprite&&Math.abs(vx)>0.04)sprite.style.transform="scaleX("+(vx<0?-1:1)+")"; /* face drag dir */
+        if(spd>0.12&&Math.random()<0.5)spawnDust(sx,sy+1.5);                            /* kick up dust */
         requestAnimationFrame(step);
       }
       requestAnimationFrame(step);
@@ -724,6 +728,7 @@ function attachDrag(){
         t.style.transition="left 0.5s cubic-bezier(0.34,1.56,0.64,1),top 0.5s cubic-bezier(0.34,1.56,0.64,1)";
         t.style.left=parties[idx].x+"%";t.style.top=parties[idx].y+"%";
         if(inner){inner.style.transition="transform 0.5s cubic-bezier(0.34,1.56,0.64,1)";inner.style.transform="";}
+        if(sprite)sprite.style.transform="";
         setTimeout(function(){t.style.transition="";if(inner)inner.style.transition="";},550);
         saveLocal();pushDB();endCb();
       }
@@ -818,10 +823,14 @@ function animateFormation(f){
     parties[i]=JSON.parse(JSON.stringify(f.parties[i]));
     var t=document.getElementById("tok"+i);
     if(!t)continue;
+    var ox=parseFloat(t.style.left)||parties[i].x, oy=parseFloat(t.style.top)||parties[i].y;
+    var nx=parties[i].x, ny=parties[i].y;
     t.style.transition="left 0.7s cubic-bezier(0.45,0,0.25,1),top 0.7s cubic-bezier(0.45,0,0.25,1)";
-    t.style.left=parties[i].x+"%";t.style.top=parties[i].y+"%";
+    t.style.left=nx+"%";t.style.top=ny+"%";
     t.classList.add("tok-walk");
     (function(el){setTimeout(function(){el.classList.remove("tok-walk");el.style.transition="";},740);})(t);
+    /* kick up dust along the marching path */
+    if(Math.abs(nx-ox)>1||Math.abs(ny-oy)>1){(function(ox,oy,nx,ny){var k=0;var di=setInterval(function(){k++;var f=k/5;spawnDust(ox+(nx-ox)*f+(Math.random()*2-1),oy+(ny-oy)*f+1.5);if(k>=5)clearInterval(di);},130);})(ox,oy,nx,ny);}
     var tag=t.querySelector(".tok-tag");if(tag)tag.textContent=parties[i].name;
     var nm=t.querySelector(".tok-members");
     if(nm){nm.innerHTML="";parties[i].members.forEach(function(m){if(!m.trim())return;var s=document.createElement("span");s.className="tok-mname";s.textContent=m;nm.appendChild(s);});}
@@ -1045,6 +1054,97 @@ initHeaderMobs();
   var btn=document.getElementById("btnWeather");
   if(btn)btn.addEventListener("click",function(){apply(modes[(modes.indexOf(mode)+1)%modes.length]);});
   apply(mode);
+})();
+
+/* ═══════════ TOKEN / MAP LIFE HELPERS (dust, sparks, hover-react, critters, fireflies) ═══════════ */
+function spawnDust(xPct,yPct){
+  var wrap=document.getElementById("mapwrap");if(!wrap)return;
+  var d=document.createElement("div");d.className="dust";
+  d.style.left=xPct+"%";d.style.top=yPct+"%";
+  d.style.setProperty("--dx",(-12+Math.random()*24).toFixed(0)+"px");
+  wrap.appendChild(d);setTimeout(function(){d.remove();},650);
+}
+function spawnSpark(px,py){
+  var wrap=document.getElementById("mapwrap");if(!wrap)return;
+  var s=document.createElement("div");s.className="pen-spark";
+  s.style.left=px+"px";s.style.top=py+"px";
+  s.style.setProperty("--sxx",(-12+Math.random()*24).toFixed(0)+"px");
+  s.style.setProperty("--syy",(-16-Math.random()*12).toFixed(0)+"px");
+  wrap.appendChild(s);setTimeout(function(){s.remove();},600);
+}
+var __tokEmoteAt={};
+function wireTokenLife(el,idx){
+  el.addEventListener("mouseenter",function(){
+    var c=document.getElementById("pcard"+idx);if(c)c.classList.add("pcard-hl");
+    var now=Date.now();
+    if(now-(__tokEmoteAt[idx]||0)>1200){__tokEmoteAt[idx]=now;
+      var av=el.querySelector(".tok-avatar");
+      if(av){var em=roEmoteNode("tok-emote");av.appendChild(em);setTimeout(function(){em.remove();},1600);}
+    }
+  });
+  el.addEventListener("mousemove",function(e){
+    if(el.classList.contains("tok-drag"))return;
+    var sp=el.querySelector(".tok-sprite");if(!sp)return;
+    var r=el.getBoundingClientRect();
+    sp.style.transform="scaleX("+(e.clientX<r.left+r.width/2?-1:1)+")";   /* face the cursor */
+  });
+  el.addEventListener("mouseleave",function(){
+    var c=document.getElementById("pcard"+idx);if(c)c.classList.remove("pcard-hl");
+    var sp=el.querySelector(".tok-sprite");if(sp&&!el.classList.contains("tok-drag"))sp.style.transform="";
+  });
+}
+
+/* battlefield ambience: torches + roaming critters + night fireflies */
+(function(){
+  var wrap=document.getElementById("mapwrap");if(!wrap)return;
+
+  [[6,15],[94,17],[50,6]].forEach(function(pp){
+    var tr=document.createElement("div");tr.className="torch";
+    tr.style.left=pp[0]+"%";tr.style.top=pp[1]+"%";wrap.appendChild(tr);
+  });
+
+  var critterIds=[1002,1063,1113,1011,1007];
+  function spawnCritter(){
+    if(document.hidden)return;
+    var id=critterIds[Math.floor(Math.random()*critterIds.length)];
+    var c=document.createElement("img");c.className="map-critter";
+    c.src="https://static.divine-pride.net/images/mobs/png/"+id+".png";
+    c.onerror=function(){c.remove();};
+    var dir=Math.random()<0.5?1:-1;
+    c.style.left=(12+Math.random()*72)+"%";c.style.top=(24+Math.random()*64)+"%";
+    wrap.appendChild(c);
+    var hops=4+Math.floor(Math.random()*5),k=0;
+    function hop(){
+      if(!c.isConnected)return;
+      if(k++>=hops){c.animate([{opacity:1},{opacity:0}],{duration:500,fill:"forwards"}).onfinish=function(){c.remove();};return;}
+      var x=Math.max(3,Math.min(94,parseFloat(c.style.left)+dir*(2+Math.random()*3)));c.style.left=x+"%";
+      c.animate([
+        {transform:"scaleX("+dir+") translateY(0)"},
+        {transform:"scaleX("+dir+") translateY(-10px)",offset:0.5},
+        {transform:"scaleX("+dir+") translateY(0)"}
+      ],{duration:430,easing:"ease-in-out"});
+      setTimeout(hop,520);
+    }
+    setTimeout(hop,200);
+  }
+  setInterval(function(){if(Math.random()<0.7)spawnCritter();},9000);
+  setTimeout(spawnCritter,5500);
+
+  function isNight(){
+    var dn=document.getElementById("daynight");
+    if(!dn||!dn.getAnimations)return false;
+    var a=dn.getAnimations()[0];if(!a||a.currentTime==null)return false;
+    var f=(a.currentTime%120000)/120000;return f>=0.42&&f<=0.82;
+  }
+  function spawnFirefly(){
+    var fly=document.createElement("div");fly.className="firefly";
+    fly.style.left=(5+Math.random()*90)+"%";fly.style.top=(22+Math.random()*68)+"%";
+    fly.style.setProperty("--fx",(-30+Math.random()*60).toFixed(0)+"px");
+    fly.style.setProperty("--fy",(-22+Math.random()*44).toFixed(0)+"px");
+    var d=4+Math.random()*4;fly.style.animationDuration=d.toFixed(1)+"s";
+    wrap.appendChild(fly);setTimeout(function(){fly.remove();},d*1000+120);
+  }
+  setInterval(function(){if(!document.hidden&&isNight()&&Math.random()<0.85)spawnFirefly();},850);
 })();
 
 /* ═══════════ PARTY THUMBNAIL MOBS — pace + bob + RO emotes ═══════════ */

@@ -313,4 +313,23 @@ img.hdr-part.ro-emote{width:20px;}
 @keyframes snowFall{from{top:-6%;transform:translateX(0) rotate(0);}to{top:112%;transform:translateX(var(--sway,16px)) rotate(220deg);}}
 .badm.on{background:linear-gradient(135deg,var(--gdk),var(--gold))!important;color:#1a1200!important;border:none!important;box-shadow:0 0 12px rgba(240,192,64,0.45);}
 
+/* ── token drag / marching dust ── */
+.dust{position:absolute;width:14px;height:14px;border-radius:50%;transform:translate(-50%,-50%);pointer-events:none;z-index:9;background:radial-gradient(circle,rgba(150,130,95,0.5),rgba(150,130,95,0) 70%);animation:dustPuff .65s ease-out forwards;}
+@keyframes dustPuff{0%{opacity:.7;transform:translate(-50%,-50%) scale(.5);}100%{opacity:0;transform:translate(calc(-50% + var(--dx,0px)),-90%) scale(1.8);}}
+
+/* ── pen sparkle trail ── */
+.pen-spark{position:absolute;width:4px;height:4px;border-radius:50%;transform:translate(-50%,-50%);pointer-events:none;z-index:12;background:radial-gradient(circle,#fff,#ffd24d);box-shadow:0 0 6px #ffd24d;animation:penSpark .6s ease-out forwards;}
+@keyframes penSpark{0%{opacity:1;transform:translate(-50%,-50%) scale(1);}100%{opacity:0;transform:translate(calc(-50% + var(--sxx,0px)),calc(-50% + var(--syy,-14px))) scale(.3);}}
+
+/* ── roaming battlefield critters ── */
+.map-critter{position:absolute;width:26px;height:26px;object-fit:contain;image-rendering:pixelated;transform-origin:bottom center;pointer-events:none;z-index:6;filter:drop-shadow(0 2px 3px rgba(0,0,0,0.6));}
+
+/* ── flickering torches ── */
+.torch{position:absolute;width:13px;height:17px;transform:translate(-50%,-50%);pointer-events:none;z-index:5;border-radius:50% 50% 50% 50%/65% 65% 40% 40%;background:radial-gradient(circle at 50% 72%,#fff3a0,#ff8a00 55%,#e23000 92%);box-shadow:0 0 14px 4px rgba(255,140,0,0.5);animation:flicker .14s infinite alternate;}
+@keyframes flicker{0%{transform:translate(-50%,-50%) scale(1,1);opacity:.92;}100%{transform:translate(-50%,-53%) scale(1.1,0.9);opacity:1;box-shadow:0 0 18px 6px rgba(255,165,30,0.65);}}
+
+/* ── night fireflies ── */
+.firefly{position:absolute;width:4px;height:4px;border-radius:50%;transform:translate(-50%,-50%);pointer-events:none;z-index:7;background:#eaff9a;box-shadow:0 0 8px 2px rgba(200,255,90,0.85);animation:firefly ease-in-out forwards;}
+@keyframes firefly{0%{opacity:0;transform:translate(-50%,-50%);}25%{opacity:1;}50%{transform:translate(calc(-50% + var(--fx,0px)),calc(-50% + var(--fy,0px)));}75%{opacity:1;}100%{opacity:0;transform:translate(-50%,-50%);}}
+
 @media (prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;animation-iteration-count:1!important;}}
