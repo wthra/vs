@@ -28,6 +28,7 @@
     <div><h1>RO GUILD WAR &#8212; TACTICAL BOARD</h1><span>Vale of Clash &middot; Ragnarok Origin</span></div>
   </div>
   <div class="hb" id="hbadge">
+    <button class="badm" id="btnWeather" title="Toggle weather">&#9925; Weather</button>
     <span style="font-size:11px;color:var(--mu)">Viewer</span>
     <button class="badm" id="btnSL">&#128273; Admin</button>
   </div>
@@ -952,15 +953,51 @@ initHeaderMobs();
 (function(){
   var wrap=document.getElementById("mapwrap");if(!wrap)return;
   var rays=document.createElement("div");rays.id="godrays";wrap.appendChild(rays);
-  for(var i=0;i<3;i++){
+  for(var i=0;i<4;i++){
     var c=document.createElement("div");c.className="cloud";
-    c.style.top=(6+Math.random()*64)+"%";
-    c.style.setProperty("--cs",(130+Math.random()*140)+"px");
-    c.style.animationDuration=(40+Math.random()*32).toFixed(1)+"s";
-    c.style.animationDelay=(-Math.random()*45).toFixed(1)+"s";
-    c.style.opacity=(0.05+Math.random()*0.06).toFixed(3);
+    c.style.top=(4+Math.random()*62)+"%";
+    c.style.setProperty("--cs",(160+Math.random()*160)+"px");
+    c.style.animationDuration=(30+Math.random()*26).toFixed(1)+"s";
+    c.style.animationDelay=(-Math.random()*40).toFixed(1)+"s";
+    c.style.opacity=(0.16+Math.random()*0.12).toFixed(3);
     wrap.appendChild(c);
   }
+
+  /* day–night tint cycle */
+  var dn=document.createElement("div");dn.id="daynight";wrap.appendChild(dn);
+
+  /* parallax: nudge the (enlarged) background opposite the cursor for depth */
+  var bg=document.getElementById("mapbg");
+  if(bg){
+    wrap.addEventListener("mousemove",function(e){
+      var r=wrap.getBoundingClientRect();
+      var nx=(e.clientX-r.left)/r.width-0.5, ny=(e.clientY-r.top)/r.height-0.5;
+      bg.style.transform="translate("+(-nx*12).toFixed(1)+"px,"+(-ny*12).toFixed(1)+"px)";
+    });
+    wrap.addEventListener("mouseleave",function(){bg.style.transform="translate(0,0)";});
+  }
+
+  /* birds: occasional small flock crossing the sky */
+  function spawnFlock(){
+    if(document.hidden)return;
+    var W=wrap.clientWidth,H=wrap.clientHeight;if(!W||!H)return;
+    var dir=Math.random()<0.5?1:-1, baseY=H*(0.06+Math.random()*0.34);
+    var n=3+Math.floor(Math.random()*4), dur=8000+Math.random()*5000;
+    for(var i=0;i<n;i++){(function(k){
+      var b=document.createElement("div");b.className="bird";
+      if(dir<0)b.style.transform="scaleX(-1)";
+      wrap.appendChild(b);
+      var sx=dir>0?-50:W+50, ex=dir>0?W+50:-50, y=baseY+k*9+(Math.random()*8-4);
+      var a=b.animate([
+        {left:sx+"px",top:y+"px"},
+        {left:((sx+ex)/2)+"px",top:(y-16)+"px",offset:0.5},
+        {left:ex+"px",top:y+"px"}
+      ],{duration:dur,delay:k*170,easing:"ease-in-out"});
+      a.onfinish=function(){b.remove();};
+    })(i);}
+  }
+  setTimeout(spawnFlock,4000);
+  setInterval(spawnFlock,17000+Math.random()*9000);
 })();
 
 /* ═══════════ HEADER SPARKS (rising embers) ═══════════ */
@@ -976,6 +1013,36 @@ initHeaderMobs();
     header.appendChild(s);
     setTimeout(function(){s.remove();},d*1000+200);
   },560);
+})();
+
+/* ═══════════ WEATHER toggle: none -> rain -> snow ═══════════ */
+(function(){
+  var wrap=document.getElementById("mapwrap");if(!wrap)return;
+  var L=document.createElement("div");L.id="weather";wrap.appendChild(L);
+  var modes=["none","rain","snow"],labels={none:"&#9925; Weather",rain:"&#127783; Rain",snow:"&#10052; Snow"};
+  var mode=localStorage.getItem("ro_weather")||"none";
+  function build(m){
+    L.innerHTML="";L.className="weather "+m;
+    if(m==="rain"){
+      for(var i=0;i<80;i++){var d=document.createElement("div");d.className="rain";
+        d.style.left=(Math.random()*100)+"%";
+        d.style.animationDuration=(0.45+Math.random()*0.45).toFixed(2)+"s";
+        d.style.animationDelay=(-Math.random()*1.2).toFixed(2)+"s";
+        d.style.opacity=(0.35+Math.random()*0.5).toFixed(2);L.appendChild(d);}
+    } else if(m==="snow"){
+      for(var j=0;j<60;j++){var f=document.createElement("div");f.className="snow";f.textContent="❄";
+        f.style.left=(Math.random()*100)+"%";
+        f.style.fontSize=(7+Math.random()*9).toFixed(0)+"px";
+        f.style.setProperty("--sway",(-30+Math.random()*60).toFixed(0)+"px");
+        f.style.animationDuration=(4+Math.random()*5).toFixed(2)+"s";
+        f.style.animationDelay=(-Math.random()*6).toFixed(2)+"s";
+        f.style.opacity=(0.45+Math.random()*0.5).toFixed(2);L.appendChild(f);}
+    }
+  }
+  function apply(m){mode=m;build(m);localStorage.setItem("ro_weather",m);var b=document.getElementById("btnWeather");if(b){b.innerHTML=labels[m];b.classList.toggle("on",m!=="none");}}
+  var btn=document.getElementById("btnWeather");
+  if(btn)btn.addEventListener("click",function(){apply(modes[(modes.indexOf(mode)+1)%modes.length]);});
+  apply(mode);
 })();
 
 /* ═══════════ PARTY THUMBNAIL MOBS — pace + bob + RO emotes ═══════════ */

@@ -209,9 +209,9 @@ header{animation:fadeDown 0.5s cubic-bezier(0.22,1,0.36,1) both;}
 .tok.tok-drag::after{opacity:.25;}
 
 /* ── map god rays + drifting cloud shadows ── */
-#godrays{position:absolute;inset:0;z-index:3;pointer-events:none;mix-blend-mode:screen;opacity:.55;background:repeating-linear-gradient(118deg,rgba(255,240,180,0) 0,rgba(255,240,180,0) 40px,rgba(255,240,180,0.055) 48px,rgba(255,240,180,0) 64px);background-size:220% 100%;animation:rayDrift 16s linear infinite;}
+#godrays{position:absolute;inset:0;z-index:3;pointer-events:none;mix-blend-mode:screen;opacity:.7;background:repeating-linear-gradient(118deg,rgba(255,242,190,0) 0,rgba(255,242,190,0) 36px,rgba(255,242,190,0.10) 46px,rgba(255,242,190,0) 62px);background-size:220% 100%;animation:rayDrift 16s linear infinite;}
 @keyframes rayDrift{0%{background-position:0 0;}100%{background-position:160px 0;}}
-.cloud{position:absolute;z-index:2;pointer-events:none;left:-30%;width:var(--cs,180px);height:calc(var(--cs,180px)*0.46);border-radius:50%;background:radial-gradient(ellipse at center,rgba(0,0,0,0.5),rgba(0,0,0,0) 70%);filter:blur(7px);animation:cloudDrift linear infinite;}
+.cloud{position:absolute;z-index:4;pointer-events:none;left:-30%;width:var(--cs,180px);height:calc(var(--cs,180px)*0.5);border-radius:50%;background:radial-gradient(ellipse at center,rgba(214,230,245,0.85),rgba(200,222,240,0.25) 45%,rgba(200,222,240,0) 72%);filter:blur(9px);mix-blend-mode:screen;animation:cloudDrift linear infinite;}
 @keyframes cloudDrift{from{left:-30%;}to{left:130%;}}
 
 /* ── header rising embers ── */
@@ -288,5 +288,28 @@ img.hdr-part.ro-emote{width:20px;}
 #btnPlay{background:linear-gradient(135deg,var(--gdk),var(--gold))!important;color:#1a1200!important;border:none!important;font-weight:900;box-shadow:0 0 10px rgba(240,192,64,0.4);}
 #btnPlay:hover{filter:brightness(1.1);transform:translateY(-1px);}
 #btnPlay.playing{background:linear-gradient(135deg,#aa2020,#e05050)!important;color:#fff!important;box-shadow:0 0 12px rgba(224,80,80,0.5);}
+
+/* ── map background parallax (enlarged so a nudge never reveals edges) ── */
+#mapbg{inset:-18px;transition:transform .25s ease-out;will-change:transform;}
+
+/* ── day–night tint cycle over the map ── */
+@keyframes dayNight{0%{background:rgba(255,240,200,0);}18%{background:rgba(255,170,70,0.10);}32%{background:rgba(255,110,40,0.18);}46%{background:rgba(40,50,110,0.34);}60%{background:rgba(20,30,80,0.40);}78%{background:rgba(80,90,150,0.20);}88%{background:rgba(255,200,120,0.12);}100%{background:rgba(255,240,200,0);}}
+#daynight{position:absolute;inset:0;z-index:2;pointer-events:none;animation:dayNight 120s linear infinite;}
+
+/* ── birds (CSS wings flapping; flight path driven by Web Animations API) ── */
+.bird{position:absolute;z-index:5;width:13px;height:8px;pointer-events:none;}
+.bird::before,.bird::after{content:'';position:absolute;top:2px;width:8px;height:6px;border-top:2px solid rgba(15,18,28,0.7);border-radius:50% 50% 0 0;}
+.bird::before{left:-1px;transform-origin:right center;animation:flapL .42s ease-in-out infinite;}
+.bird::after{right:-1px;transform-origin:left center;animation:flapR .42s ease-in-out infinite;}
+@keyframes flapL{0%,100%{transform:rotate(-15deg);}50%{transform:rotate(18deg);}}
+@keyframes flapR{0%,100%{transform:rotate(15deg);}50%{transform:rotate(-18deg);}}
+
+/* ── weather: rain / snow ── */
+#weather{position:absolute;inset:0;z-index:24;pointer-events:none;overflow:hidden;}
+.rain{position:absolute;top:-15%;width:1.6px;height:13%;border-radius:2px;background:linear-gradient(to bottom,rgba(170,205,255,0),rgba(170,205,255,0.6));transform:rotate(13deg);animation:rainFall linear infinite;}
+@keyframes rainFall{from{top:-15%;}to{top:115%;}}
+.snow{position:absolute;top:-6%;line-height:1;color:#eaf3ff;text-shadow:0 0 3px rgba(255,255,255,0.6);animation:snowFall linear infinite;}
+@keyframes snowFall{from{top:-6%;transform:translateX(0) rotate(0);}to{top:112%;transform:translateX(var(--sway,16px)) rotate(220deg);}}
+.badm.on{background:linear-gradient(135deg,var(--gdk),var(--gold))!important;color:#1a1200!important;border:none!important;box-shadow:0 0 12px rgba(240,192,64,0.45);}
 
 @media (prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;animation-iteration-count:1!important;}}
